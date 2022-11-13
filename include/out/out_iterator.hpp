@@ -93,6 +93,20 @@ out_iterator<Impl> make_out_iterator(Impl impl)
   return out_iterator<Impl>(impl);
 }
 
+struct output_proxy
+{
+  template <class Next>
+  Next operator >>=(Next next) const
+  {
+    return next;
+  }
+};
+
+inline output_proxy output()
+{
+  return output_proxy();
+}
+
 } // namespace out
 
 #endif // OUT_OUT_ITERATOR_HPP
