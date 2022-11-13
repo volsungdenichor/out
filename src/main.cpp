@@ -51,8 +51,8 @@ struct is_vowel
 {
   bool operator()(char ch) const
   {
-    ch = std::tolower(ch);
-    return ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u' || ch == 'y';
+    static const std::string vowels = "aeiouy";
+    return vowels.find(std::tolower(ch)) != std::string::npos;
   }
 };
 
@@ -84,17 +84,13 @@ int main()
 {
   std::vector<int> a, b, c;
 
-  std::vector<std::string> v;
-  v.push_back("Ala");
-  v.push_back("Basia");
-  v.push_back("Celina");
+  a.resize(50);
+  iota(a.begin(), a.end(), 0);
 
   boost::range::copy(
-    v,
-    out::join()
-    >>= out::filter(is_vowel())
-    >>= out::enumerate()
-    >>= out::for_each(print("...")));
+    a,
+    out::drop(3) >>= out::take(3)
+    >>= out::cout("\n"));
 
   print_vect("a", a);
   print_vect("b", b);
