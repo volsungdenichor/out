@@ -5,6 +5,7 @@
 #include "out/filter.hpp"
 #include "out/take.hpp"
 #include "out/drop.hpp"
+#include "out/stride.hpp"
 #include "out/take_while.hpp"
 #include "out/drop_while.hpp"
 #include "out/join.hpp"
