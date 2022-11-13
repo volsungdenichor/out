@@ -2,6 +2,8 @@
 #include <algorithm>
 #include <string>
 #include <vector>
+#include <set>
+#include <functional>
 
 #include "out/out.hpp"
 #include <boost/range/algorithm/copy.hpp>
@@ -123,6 +125,20 @@ void operator >>=(boost::iterator_range<Iter> range, Output output)
   boost::range::copy(range, output);
 }
 
+template <class V>
+struct unique
+{
+  mutable std::set<V> visited;
+
+  template <class T>
+  bool operator()(const T& item) const
+  {
+    bool result = visited.find(item) == visited.end();
+    visited.insert(item);
+    return result;
+  }
+};
+
 int main()
 {
   Person adam("Adam", "Mickiewicz");
@@ -141,6 +157,9 @@ int main()
     >>= out::output()
     >>= out::filter(has_value())
     >>= out::transform(dereference())
+    >>= out::transform(out::mem_fn(&Person::first_name))
+    >>= out::filter(unique<std::string>())
+    >>= out::enumerate()
     >>= out::cout("\n");
 }
 

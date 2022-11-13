@@ -1,6 +1,8 @@
 #ifndef OUT_OUT_HPP
 #define OUT_OUT_HPP
 
+#include "out/utils.hpp"
+
 #include "out/transform.hpp"
 #include "out/filter.hpp"
 #include "out/advance_while.hpp"
