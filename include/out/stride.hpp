@@ -31,12 +31,12 @@ struct stride_proxy
 
     template <class T>
     void operator()(const T& item)
-		{
-			if (n == 0)
-			{
-			  yield(next, item);
-			}
-			n = (n + 1) % count;
+    {
+      if (n == 0)
+      {
+        yield(next, item);
+      }
+      n = (n + 1) % count;
     }
   };
 
