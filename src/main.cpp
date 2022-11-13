@@ -6,6 +6,7 @@
 #include <functional>
 
 #include "out/out.hpp"
+#include <boost/optional.hpp>
 #include <boost/range/algorithm/copy.hpp>
 
 template <class Iter, class T>
@@ -63,7 +64,16 @@ struct has_value
   template <class T>
   bool operator()(T* ptr) const
   {
-    return !!ptr;
+    return static_cast<bool>(ptr);
+  }
+};
+
+struct identity
+{
+  template <class T>
+  T& operator()(T& item) const
+  {
+    return item;
   }
 };
 
@@ -73,8 +83,19 @@ struct dereference
   T& operator()(T* ptr) const
   {
     if (!ptr)
+    {
       throw std::runtime_error("Dereferencing null ptr");
+    }
     return *ptr;
+  }
+};
+
+struct addressof
+{
+  template <class T>
+  T* operator()(T& item) const
+  {
+    return &item;
   }
 };
 
@@ -139,11 +160,19 @@ struct unique
   }
 };
 
+boost::optional<std::string> get_name(const Person& p)
+{
+  if (p.first_name == "Adam" || p.first_name == "Zygmunt")
+    return p.last_name.substr(0, 2);
+  return boost::none;
+}
+
 int main()
 {
   Person adam("Adam", "Mickiewicz");
   Person juliusz("Juliusz", "Slowacki");
   Person zygmunt("Zygmunt", "Krasinski");
+
   std::vector<const Person*> persons;
   persons.push_back(&adam);
   persons.push_back(NULL);
@@ -153,16 +182,12 @@ int main()
   persons.push_back(NULL);
   persons.push_back(&juliusz);
   persons.push_back(&zygmunt);
+  persons.push_back(NULL);
   persons.push_back(&juliusz);
 
   boost::make_iterator_range(persons)
     >>= out::output()
-    >>= out::filter(has_value())
-    >>= out::transform(dereference())
-    >>= out::transform(out::mem_fn(&Person::first_name))
-    // >>= out::filter(unique<std::string>())
-    >>= out::intersperse(std::string("---"))
-    >>= out::stride(3)
+    >>= out::transform_maybe(identity())
     >>= out::enumerate()
     >>= out::cout("\n");
 }

@@ -4,6 +4,7 @@
 #include "out/utils.hpp"
 
 #include "out/transform.hpp"
+#include "out/transform_maybe.hpp"
 #include "out/filter.hpp"
 #include "out/advance_while.hpp"
 #include "out/advance.hpp"
