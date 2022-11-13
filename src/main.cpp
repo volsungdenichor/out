@@ -143,6 +143,7 @@ int main()
 {
   Person adam("Adam", "Mickiewicz");
   Person juliusz("Juliusz", "Slowacki");
+  Person zygmunt("Zygmunt", "Krasinski");
   std::vector<const Person*> persons;
   persons.push_back(&adam);
   persons.push_back(NULL);
@@ -151,6 +152,7 @@ int main()
   persons.push_back(&adam);
   persons.push_back(NULL);
   persons.push_back(&juliusz);
+  persons.push_back(&zygmunt);
   persons.push_back(&juliusz);
 
   boost::make_iterator_range(persons)
@@ -158,7 +160,9 @@ int main()
     >>= out::filter(has_value())
     >>= out::transform(dereference())
     >>= out::transform(out::mem_fn(&Person::first_name))
-    >>= out::filter(unique<std::string>())
+    // >>= out::filter(unique<std::string>())
+    >>= out::intersperse(std::string("---"))
+    >>= out::stride(3)
     >>= out::enumerate()
     >>= out::cout("\n");
 }

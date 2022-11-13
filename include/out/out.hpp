@@ -9,6 +9,7 @@
 #include "out/advance.hpp"
 #include "out/join.hpp"
 #include "out/enumerate.hpp"
+#include "out/intersperse.hpp"
 
 #include "out/fork.hpp"
 #include "out/partition.hpp"
