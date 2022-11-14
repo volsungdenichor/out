@@ -18,27 +18,11 @@ void iota(Iter b, Iter e, T init)
   }
 }
 
-struct inc
-{
-  int operator()(int v) const
-  {
-    return v + 1;
-  }
-};
-
 struct sqr
 {
   int operator()(int v) const
   {
     return v * v;
-  }
-};
-
-struct neg
-{
-  int operator()(int v) const
-  {
-    return -v;
   }
 };
 
@@ -56,46 +40,6 @@ struct is_vowel
   {
     static const std::string vowels = "aeiouy";
     return vowels.find(std::tolower(ch)) != std::string::npos;
-  }
-};
-
-struct has_value
-{
-  template <class T>
-  bool operator()(T* ptr) const
-  {
-    return static_cast<bool>(ptr);
-  }
-};
-
-struct identity
-{
-  template <class T>
-  T& operator()(T& item) const
-  {
-    return item;
-  }
-};
-
-struct dereference
-{
-  template <class T>
-  T& operator()(T* ptr) const
-  {
-    if (!ptr)
-    {
-      throw std::runtime_error("Dereferencing null ptr");
-    }
-    return *ptr;
-  }
-};
-
-struct addressof
-{
-  template <class T>
-  T* operator()(T& item) const
-  {
-    return &item;
   }
 };
 
@@ -146,27 +90,6 @@ void operator >>=(boost::iterator_range<Iter> range, Output output)
   boost::range::copy(range, output);
 }
 
-template <class V>
-struct unique
-{
-  mutable std::set<V> visited;
-
-  template <class T>
-  bool operator()(const T& item) const
-  {
-    bool result = visited.find(item) == visited.end();
-    visited.insert(item);
-    return result;
-  }
-};
-
-boost::optional<std::string> get_name(const Person& p)
-{
-  if (p.first_name == "Adam" || p.first_name == "Zygmunt")
-    return p.last_name.substr(0, 2);
-  return boost::none;
-}
-
 int main()
 {
   Person adam("Adam", "Mickiewicz");
@@ -187,7 +110,8 @@ int main()
 
   boost::make_iterator_range(persons)
     >>= out::output()
-    >>= out::transform_maybe(identity())
+    >>= out::transform_maybe(out::identity())
+    >>= out::transform(out::mem_fn(&Person::first_name))
     >>= out::enumerate()
     >>= out::cout("\n");
 }
