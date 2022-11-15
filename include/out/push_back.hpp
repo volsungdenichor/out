@@ -1,31 +1,29 @@
 #ifndef OUT_PUSH_BACK_HPP
 #define OUT_PUSH_BACK_HPP
 
+#include <iterator>
+
 namespace out
 {
 
 template <class Container>
-struct push_back_impl
+std::back_insert_iterator<Container> push_back(Container& container)
 {
-  Container* container;
-
-  push_back_impl(Container& container)
-    : container(&container)
-  {
-  }
-
-  template <class T>
-  void operator()(const T& item) const
-  {
-    container->push_back(item);
-  }
-};
+  return std::back_inserter(container);
+}
 
 template <class Container>
-out_iterator< push_back_impl<Container> > push_back(Container& container)
+std::insert_iterator<Container> insert(Container& container, typename Container::iterator iter)
 {
-  return make_out_iterator(push_back_impl<Container>(container));
+  return std::inserter(container, iter);
+}
+
+template <class Container>
+std::insert_iterator<Container> insert(Container& container)
+{
+  return insert(container, container.end());
 }
 
 } // namespace out
+
 #endif // OUT_PUSH_BACK_HPP

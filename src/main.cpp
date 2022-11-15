@@ -59,11 +59,11 @@ struct print
   }
 };
 
-template <class T>
-void print_vect(const char* name, const std::vector<T>& v)
+template <class R>
+void print_range(const char* name, const R& r)
 {
   std::cout << name << " = [";
-  std::copy(v.begin(), v.end(), std::ostream_iterator<T>(std::cout, ", "));
+  std::copy(r.begin(), r.end(), std::ostream_iterator<typename R::value_type>(std::cout, ", "));
   std::cout << "]" << std::endl;
 }
 
@@ -123,18 +123,18 @@ int main()
   persons.push_back(NULL);
   persons.push_back(&juliusz);
 
-  std::vector<std::string> dest(20);
+  std::vector<std::string> dest;
 
   boost::make_iterator_range(persons)
     >>= out::output()
     >>= out::transform_maybe(out::identity())
     >>= out::transform(out::mem_fn(&Person::first_name))
-//    >>= out::join_with(',')
+    >>= out::tee(out::push_back(dest))
     >>= out::intersperse(std::string(", "))
     >>= out::enumerate()
     >>= out::cout("\n");
 
-  print_vect("dest", dest);
+  print_range("dest", dest);
 }
 
 
