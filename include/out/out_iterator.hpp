@@ -1,7 +1,8 @@
 #ifndef OUT_OUT_ITERATOR_HPP
 #define OUT_OUT_ITERATOR_HPP
 
-#include <iterator>
+#include <algorithm>
+#include <out/in_iterator.hpp>
 
 namespace out
 {
@@ -40,9 +41,9 @@ yield_t<It> yield(It& it)
 }
 
 template <class It, class R>
-void yield_range(It& it, const R& range)
+void yield_range(It& it, const R& r)
 {
-  std::for_each(range.begin(), range.end(), yield(it));
+  std::for_each(begin(r), end(r), yield(it));
 }
 
 template <class Impl>

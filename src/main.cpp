@@ -6,8 +6,8 @@
 #include <functional>
 
 #include "out/out.hpp"
+#include "out/in_iterator.hpp"
 #include <boost/optional.hpp>
-#include <boost/range/algorithm/copy.hpp>
 
 template <class Iter, class T>
 void iota(Iter b, Iter e, T init)
@@ -63,7 +63,7 @@ template <class R>
 void print_range(const char* name, const R& r)
 {
   std::cout << name << " = [";
-  std::copy(r.begin(), r.end(), std::ostream_iterator<typename R::value_type>(std::cout, ", "));
+  std::copy(out::begin(r), out::end(r), std::ostream_iterator<typename R::value_type>(std::cout, ", "));
   std::cout << "]" << std::endl;
 }
 
@@ -84,12 +84,6 @@ struct Person
   }
 };
 
-template <class Iter, class Output>
-void operator >>=(boost::iterator_range<Iter> range, Output output)
-{
-  boost::range::copy(range, output);
-}
-
 struct get_prefix
 {
     int n;
@@ -105,12 +99,16 @@ struct get_prefix
     }
 };
 
+template <class T>
+std::vector<T> create_vector(T lo, T up)
+{
+  std::vector<T> res(up - lo);
+  iota(res.begin(), res.end(), lo);
+  return res;
+}
+
 int main()
 {
-  std::vector<int> v(10);
-  iota(v.begin(), v.end(), 0);
-  boost::make_iterator_range(v) >>= out::transform(sqr()) >>= out::take_while(out::less(10)) >>= out::cout(" ");
-  std::cout << std::endl;
   Person adam("Adam", "Mickiewicz");
   Person juliusz("Juliusz", "Slowacki");
   Person zygmunt("Zygmunt", "Krasinski");
@@ -129,11 +127,11 @@ int main()
 
   std::vector<std::string> dest;
 
-  boost::make_iterator_range(persons)
+  out::make_range(std::make_pair(persons.begin(), persons.end()))
     >>= out::output()
     >>= out::transform_maybe(out::identity())
     >>= out::transform(out::mem_fn(&Person::first_name))
-    >>= out::tee(out::push_back(dest))
+    >>= out::tee(out::insert(dest))
     >>= out::intersperse(std::string(", "))
     >>= out::enumerate()
     >>= out::cout("\n");

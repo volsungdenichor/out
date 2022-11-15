@@ -1,7 +1,7 @@
 #ifndef OUT_PUSH_BACK_HPP
 #define OUT_PUSH_BACK_HPP
 
-#include <iterator>
+#include <out/in_iterator.hpp>
 
 namespace out
 {
@@ -24,7 +24,7 @@ std::insert_iterator<Container> insert(Container& container, typename Container:
 template <class Container>
 std::insert_iterator<Container> insert(Container& container)
 {
-  return insert(container, container.end());
+  return insert(container, end(container));
 }
 
 } // namespace detail
