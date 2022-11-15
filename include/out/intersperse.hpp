@@ -6,6 +6,9 @@
 namespace out
 {
 
+namespace detail
+{
+
 struct intersperse_policy
 {
   template <class Next, class T>
@@ -78,6 +81,11 @@ intersperse_proxy<S, join_with_policy> join_with(const S& separator)
 {
   return intersperse_proxy<S, join_with_policy>(separator);
 }
+
+} // namespace detail
+
+using detail::intersperse;
+using detail::join_with;
 
 } // namespace out
 

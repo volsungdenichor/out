@@ -6,6 +6,9 @@
 namespace out
 {
 
+namespace detail
+{
+
 struct take_policy
 {
   template <class Next, class T>
@@ -100,6 +103,12 @@ inline advance_proxy<stride_policy> stride(int count)
 {
   return advance_proxy<stride_policy>(count);
 }
+
+} // namespace detail
+
+using detail::drop;
+using detail::take;
+using detail::stride;
 
 } // namespace out
 

@@ -6,6 +6,9 @@
 namespace out
 {
 
+namespace detail
+{
+
 struct join_proxy
 {
   template <class Next>
@@ -36,6 +39,10 @@ inline join_proxy join()
 {
   return join_proxy();
 }
+
+} // namespace detail
+
+using detail::join;
 
 } // namespace out
 

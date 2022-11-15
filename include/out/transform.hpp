@@ -6,6 +6,9 @@
 namespace out
 {
 
+namespace detail
+{
+
 struct transform_policy
 {
   template <class Next, class R>
@@ -94,7 +97,13 @@ template <class Func>
 transform_proxy<Func, transform_maybe_policy> transform_maybe(Func func)
 {
   return transform_proxy<Func, transform_maybe_policy>(func);
-} 
+}
+
+} // namespace detail
+
+using detail::transform;
+using detail::transform_join;
+using detail::transform_maybe;
 
 } // namespace out
 

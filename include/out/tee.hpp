@@ -4,6 +4,9 @@
 namespace out
 {
 
+namespace detail
+{
+
 template <class It>
 struct tee_proxy
 {
@@ -46,6 +49,11 @@ tee_proxy<It> tee(It it)
 {
   return tee_proxy<It>(it);
 }
+
+} // namespace detail
+
+using detail::tee;
+
 } // namespace out
 
 #endif // OUT_TEE_HPP

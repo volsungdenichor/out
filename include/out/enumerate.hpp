@@ -7,6 +7,9 @@
 namespace out
 {
 
+namespace detail
+{
+
 template <class T>
 struct index_value
 {
@@ -17,6 +20,18 @@ struct index_value
     : value(value)
     , index(index)
   {
+  }
+
+  template <class U>
+  bool operator==(const index_value<U>& other) const
+  {
+    return index == other.index && value == other.value;
+  }
+
+  template <class U>
+  bool operator!=(const index_value<U>& other) const
+  {
+    return !(*this == other);
   }
 
   friend std::ostream& operator<<(std::ostream& os, const index_value& item)
@@ -70,6 +85,11 @@ inline enumerate_proxy enumerate(int start = 0)
 {
   return enumerate_proxy(start);
 }
+
+} // namespace detail
+
+using detail::index_value;
+using detail::enumerate;
 
 } // namespace out
 

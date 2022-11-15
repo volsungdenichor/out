@@ -6,6 +6,9 @@
 namespace out
 {
 
+namespace detail
+{
+
 template <class Pred, class OnTrue, class OnFalse>
 struct partition_impl
 {
@@ -39,6 +42,10 @@ out_iterator< partition_impl<Pred, OnTrue, OnFalse> > partition(Pred pred, OnTru
 {
   return make_out_iterator(partition_impl<Pred, OnTrue, OnFalse>(pred, on_true, on_false));
 }
+
+} // namespace detail
+
+using detail::partition;
 
 } // namespace out
 

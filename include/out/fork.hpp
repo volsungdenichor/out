@@ -6,6 +6,9 @@
 namespace out
 {
 
+namespace detail
+{
+
 template <class Next0, class Next1, class Next2, class Next3>
 struct fork_impl
 {
@@ -55,6 +58,10 @@ out_iterator< fork_impl<Next0, dev_null_t, dev_null_t, dev_null_t> > fork(Next0 
 {
   return fork(next0, dev_null());
 }
+
+} // namespace detail
+
+using detail::fork;
 
 } // namespace out
 

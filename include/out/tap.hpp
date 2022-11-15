@@ -5,6 +5,10 @@
 
 namespace out
 {
+
+namespace detail
+{
+
 template <class Func>
 struct tap_proxy
 {
@@ -47,6 +51,10 @@ tap_proxy<Func> tap(Func func)
 {
   return tap_proxy<Func>(func);
 }
+
+} // namespace detail
+
+using detail::tap;
 
 } // namespace out
 

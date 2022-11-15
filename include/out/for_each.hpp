@@ -1,6 +1,10 @@
 #ifndef OUT_FOR_EACH_HPP
 #define OUT_FOR_EACH_HPP
+
 namespace out
+{
+
+namespace detail
 {
 
 template <class Func>
@@ -25,6 +29,10 @@ out_iterator< for_each_impl<Func> > for_each(Func func)
 {
   return make_out_iterator(for_each_impl<Func>(func));
 }
+
+} // namespace detail
+
+using detail::for_each;
 
 } // namespace out
 

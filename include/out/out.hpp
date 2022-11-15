@@ -1,6 +1,7 @@
 #ifndef OUT_OUT_HPP
 #define OUT_OUT_HPP
 
+#include "out/out_iterator.hpp"
 #include "out/functions.hpp"
 
 #include "out/transform.hpp"

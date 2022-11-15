@@ -6,6 +6,9 @@
 namespace out
 {
 
+namespace detail
+{
+
 struct take_while_policy
 {
   template <class Pred, class Next, class T>
@@ -90,6 +93,12 @@ advance_while_proxy<Pred, drop_while_policy> drop_while(Pred pred)
 {
   return advance_while_proxy<Pred, drop_while_policy>(pred);
 }
+
+} // namespace detail
+
+using detail::take_while;
+using detail::drop_while;
+
 } // namespace out
 
 #endif // OUT_ADVANCE_WHILE_HPP

@@ -6,6 +6,9 @@
 namespace out
 {
 
+namespace detail
+{
+
 template <class Container>
 std::back_insert_iterator<Container> push_back(Container& container)
 {
@@ -23,6 +26,11 @@ std::insert_iterator<Container> insert(Container& container)
 {
   return insert(container, container.end());
 }
+
+} // namespace detail
+
+using detail::push_back;
+using detail::insert;
 
 } // namespace out
 

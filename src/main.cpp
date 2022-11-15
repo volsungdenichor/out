@@ -107,6 +107,10 @@ struct get_prefix
 
 int main()
 {
+  std::vector<int> v(10);
+  iota(v.begin(), v.end(), 0);
+  boost::make_iterator_range(v) >>= out::transform(sqr()) >>= out::take_while(out::less(10)) >>= out::cout(" ");
+  std::cout << std::endl;
   Person adam("Adam", "Mickiewicz");
   Person juliusz("Juliusz", "Slowacki");
   Person zygmunt("Zygmunt", "Krasinski");

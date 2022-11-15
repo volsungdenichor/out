@@ -6,6 +6,9 @@
 namespace out
 {
 
+namespace detail
+{
+
 struct dev_null_impl
 {
   template <class T>
@@ -20,6 +23,10 @@ inline out_iterator<dev_null_impl> dev_null()
 {
   return make_out_iterator(dev_null_impl());
 }
+
+} // namespace detail
+
+using detail::dev_null;
 
 } // namespace out
 

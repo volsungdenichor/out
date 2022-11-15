@@ -6,6 +6,9 @@
 namespace out
 {
 
+namespace detail
+{
+
 template <class Pred>
 struct filter_proxy
 {
@@ -50,6 +53,10 @@ filter_proxy<Pred> filter(Pred pred)
 {
   return filter_proxy<Pred>(pred);
 }
+
+} // namespace detail
+
+using detail::filter;
 
 } // namespace out
 

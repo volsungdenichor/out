@@ -7,6 +7,9 @@
 namespace out
 {
 
+namespace detail
+{
+
 struct ostream_impl
 {
   std::ostream* os;
@@ -34,6 +37,12 @@ inline out_iterator<ostream_impl> cout(const char* separator)
 {
   return ostream(std::cout, separator);
 }
+
+} // namespace detail
+
+using detail::ostream;
+using detail::cout;
+
 } // namespace out
 
 #endif // OUT_OSTREAM_HPP

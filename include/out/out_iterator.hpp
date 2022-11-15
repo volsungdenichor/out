@@ -6,6 +6,9 @@
 namespace out
 {
 
+namespace detail
+{
+
 template <class It, class T>
 void yield(It& it, const T& item)
 {
@@ -112,6 +115,10 @@ inline output_proxy output()
 {
   return output_proxy();
 }
+
+} // namespace detail
+
+using detail::output;
 
 } // namespace out
 
