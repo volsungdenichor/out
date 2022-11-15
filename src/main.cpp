@@ -63,7 +63,7 @@ template <class T>
 void print_vect(const char* name, const std::vector<T>& v)
 {
   std::cout << name << " = [";
-  std::copy(v.begin(), v.end(), std::ostream_iterator<int>(std::cout, " "));
+  std::copy(v.begin(), v.end(), std::ostream_iterator<T>(std::cout, ", "));
   std::cout << "]" << std::endl;
 }
 
@@ -90,6 +90,21 @@ void operator >>=(boost::iterator_range<Iter> range, Output output)
   boost::range::copy(range, output);
 }
 
+struct get_prefix
+{
+    int n;
+
+    get_prefix(int n)
+        : n(n)
+    {
+    }
+
+    std::string operator()(const std::string& text) const
+    {
+        return text.substr(0, std::min(text.size(), static_cast<std::size_t>(n)));
+    }
+};
+
 int main()
 {
   Person adam("Adam", "Mickiewicz");
@@ -108,12 +123,19 @@ int main()
   persons.push_back(NULL);
   persons.push_back(&juliusz);
 
+  std::vector<std::string> dest(20);
+
   boost::make_iterator_range(persons)
     >>= out::output()
     >>= out::transform_maybe(out::identity())
+    >>= out::take(3)
     >>= out::transform(out::mem_fn(&Person::first_name))
+    >>= out::transform(get_prefix(3))
+    >>= out::join()
     >>= out::enumerate()
     >>= out::cout("\n");
+
+  print_vect("dest", dest);
 }
 
 

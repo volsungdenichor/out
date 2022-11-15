@@ -7,6 +7,12 @@
 namespace out
 {
 
+template <class T, class Next>
+void join_impl(const T& item, Next& next)
+{
+  std::for_each(item.begin(), item.end(), yield(next));
+}
+
 struct join_proxy
 {
   template <class Next>
@@ -22,7 +28,7 @@ struct join_proxy
     template <class T>
     void operator()(const T& item)
     {
-      std::for_each(item.begin(), item.end(), yield(next));
+      join_impl(item, next);
     }
   };
 

@@ -2,11 +2,42 @@
 #define OUT_TRANSFORM_HPP
 
 #include <out/out_iterator.hpp>
+#include <out/join.hpp>
 
 namespace out
 {
 
-template <class Func>
+struct transform_policy
+{
+  template <class Next, class R>
+  void operator()(Next& next, const R& result) const
+  {
+    yield(next, result);
+  }
+};
+
+struct transform_maybe_policy
+{
+  template <class Next, class R>
+  void operator()(Next& next, const R& result) const
+  {
+    if (static_cast<bool>(result))
+    {
+      yield(next, *result);
+    }
+  }
+};
+
+struct transform_join_policy
+{
+  template <class Next, class R>
+  void operator()(Next& next, const R& result) const
+  {
+    join_impl(result, next);
+  }
+};
+
+template <class Func, class Policy>
 struct transform_proxy
 {
   Func func;
@@ -31,7 +62,13 @@ struct transform_proxy
     template <class T>
     void operator()(const T& item)
     {
-      yield(next, func(item));
+      handle(func(item));
+    }
+
+    template <class R>
+    void handle(const R& result)
+    {
+      Policy()(next, result);
     }
   };
 
@@ -43,10 +80,22 @@ struct transform_proxy
 };
 
 template <class Func>
-transform_proxy<Func> transform(Func func)
+transform_proxy<Func, transform_policy> transform(Func func)
 {
-  return transform_proxy<Func>(func);
+  return transform_proxy<Func, transform_policy>(func);
 }
+
+template <class Func>
+transform_proxy<Func, transform_join_policy> transform_join(Func func)
+{
+  return transform_proxy<Func, transform_join_policy>(func);
+}
+
+template <class Func>
+transform_proxy<Func, transform_maybe_policy> transform_maybe(Func func)
+{
+  return transform_proxy<Func, transform_maybe_policy>(func);
+} 
 
 } // namespace out
 
