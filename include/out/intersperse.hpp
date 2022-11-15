@@ -6,7 +6,25 @@
 namespace out
 {
 
-template <class S>
+struct intersperse_policy
+{
+  template <class Next, class T>
+  void operator()(Next& next, const T& item) const
+  {
+    yield(next, item);
+  }
+};
+
+struct join_with_policy
+{
+  template <class Next, class T>
+  void operator()(Next& next, const T& item) const
+  {
+    yield_range(next, item);
+  }
+};
+
+template <class S, class Policy>
 struct intersperse_proxy
 {
   S separator;
@@ -37,7 +55,7 @@ struct intersperse_proxy
       {
         yield(next, separator);
       }
-      yield(next, item);
+      Policy()(next, item);
       init = true;
     }
   };
@@ -50,9 +68,15 @@ struct intersperse_proxy
 };
 
 template <class S>
-intersperse_proxy<S> intersperse(const S& separator)
+intersperse_proxy<S, intersperse_policy> intersperse(const S& separator)
 {
-  return intersperse_proxy<S>(separator);
+  return intersperse_proxy<S, intersperse_policy>(separator);
+}
+
+template <class S>
+intersperse_proxy<S, join_with_policy> join_with(const S& separator)
+{
+  return intersperse_proxy<S, join_with_policy>(separator);
 }
 
 } // namespace out

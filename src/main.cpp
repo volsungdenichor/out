@@ -128,10 +128,9 @@ int main()
   boost::make_iterator_range(persons)
     >>= out::output()
     >>= out::transform_maybe(out::identity())
-    >>= out::take(3)
     >>= out::transform(out::mem_fn(&Person::first_name))
-    >>= out::transform(get_prefix(3))
-    >>= out::join()
+//    >>= out::join_with(',')
+    >>= out::intersperse(std::string(", "))
     >>= out::enumerate()
     >>= out::cout("\n");
 

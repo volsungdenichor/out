@@ -1,17 +1,10 @@
 #ifndef OUT_JOIN_HPP
 #define OUT_JOIN_HPP
 
-#include <algorithm>
 #include <out/out_iterator.hpp>
 
 namespace out
 {
-
-template <class T, class Next>
-void join_impl(const T& item, Next& next)
-{
-  std::for_each(item.begin(), item.end(), yield(next));
-}
 
 struct join_proxy
 {
@@ -28,7 +21,7 @@ struct join_proxy
     template <class T>
     void operator()(const T& item)
     {
-      join_impl(item, next);
+      yield_range(next, item);
     }
   };
 

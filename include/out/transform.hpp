@@ -2,7 +2,6 @@
 #define OUT_TRANSFORM_HPP
 
 #include <out/out_iterator.hpp>
-#include <out/join.hpp>
 
 namespace out
 {
@@ -33,7 +32,7 @@ struct transform_join_policy
   template <class Next, class R>
   void operator()(Next& next, const R& result) const
   {
-    join_impl(result, next);
+    yield_range(next, result);
   }
 };
 

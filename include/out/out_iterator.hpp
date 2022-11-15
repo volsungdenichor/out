@@ -36,6 +36,12 @@ yield_t<It> yield(It& it)
   return yield_t<It>(it);
 }
 
+template <class It, class R>
+void yield_range(It& it, const R& range)
+{
+  std::for_each(range.begin(), range.end(), yield(it));
+}
+
 template <class Impl>
 struct out_iterator
 {
