@@ -30,7 +30,7 @@ struct ostream_impl
 
 inline out_iterator<ostream_impl> ostream(std::ostream& os, const char* separator)
 {
-  return make_out_iterator(ostream_impl(os, separator));
+  return ostream_impl(os, separator);
 }
 
 inline out_iterator<ostream_impl> cout(const char* separator)

@@ -38,7 +38,7 @@ struct fork_impl
 template <class Next0, class Next1, class Next2, class Next3>
 out_iterator< fork_impl<Next0, Next1, Next2, Next3> > fork(Next0 next0, Next1 next1, Next2 next2, Next3 next3)
 {
-  return make_out_iterator(fork_impl<Next0, Next1, Next2, Next3>(next0, next1, next2, next3));
+  return fork_impl<Next0, Next1, Next2, Next3>(next0, next1, next2, next3);
 }
 
 template <class Next0, class Next1, class Next2>

@@ -38,14 +38,20 @@ struct tee_proxy
   };
 
   template <class Next>
-  out_iterator< impl<Next> > operator >>=(Next next) const
+  struct next_iter_info
   {
-    return make_out_iterator(impl<Next>(it, next));
+    typedef impl<Next> type;
+  };
+
+  template <class Next>
+  typename next_iter_info<Next>::type next_iter(Next next) const
+  {
+    return impl<Next>(it, next);
   }
 };
 
 template <class It>
-tee_proxy<It> tee(It it)
+proxy_base< tee_proxy<It> > tee(It it)
 {
   return tee_proxy<It>(it);
 }

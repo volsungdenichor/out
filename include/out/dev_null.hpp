@@ -17,11 +17,11 @@ struct dev_null_impl
   }
 };
 
-typedef out_iterator<dev_null_impl> dev_null_t;
+typedef out_iterator< dev_null_impl > dev_null_t;
 
-inline out_iterator<dev_null_impl> dev_null()
+inline out_iterator< dev_null_impl > dev_null()
 {
-  return make_out_iterator(dev_null_impl());
+  return dev_null_impl();
 }
 
 } // namespace detail

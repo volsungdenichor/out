@@ -64,20 +64,26 @@ struct intersperse_proxy
   };
 
   template <class Next>
-  out_iterator< impl<Next> > operator >>=(Next next) const
+  struct next_iter_info
   {
-    return make_out_iterator(impl<Next>(separator, next));
+    typedef impl<Next> type;
+  };
+
+  template <class Next>
+  typename next_iter_info<Next>::type next_iter(Next next) const
+  {
+    return impl<Next>(separator, next);
   }
 };
 
 template <class S>
-intersperse_proxy<S, intersperse_policy> intersperse(const S& separator)
+proxy_base< intersperse_proxy<S, intersperse_policy> > intersperse(const S& separator)
 {
   return intersperse_proxy<S, intersperse_policy>(separator);
 }
 
 template <class S>
-intersperse_proxy<S, join_with_policy> join_with(const S& separator)
+proxy_base< intersperse_proxy<S, join_with_policy> > join_with(const S& separator)
 {
   return intersperse_proxy<S, join_with_policy>(separator);
 }

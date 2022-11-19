@@ -29,13 +29,19 @@ struct join_proxy
   };
 
   template <class Next>
-  out_iterator< impl<Next> > operator >>=(Next next) const
+  struct next_iter_info
   {
-    return make_out_iterator(impl<Next>(next));
+    typedef impl<Next> type;
+  };
+
+  template <class Next>
+  typename next_iter_info<Next>::type next_iter(Next next) const
+  {
+    return impl<Next>(next);
   }
 };
 
-inline join_proxy join()
+inline proxy_base< join_proxy > join()
 {
   return join_proxy();
 }

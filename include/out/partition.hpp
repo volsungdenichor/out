@@ -40,7 +40,7 @@ struct partition_impl
 template <class Pred, class OnTrue, class OnFalse>
 out_iterator< partition_impl<Pred, OnTrue, OnFalse> > partition(Pred pred, OnTrue on_true, OnFalse on_false)
 {
-  return make_out_iterator(partition_impl<Pred, OnTrue, OnFalse>(pred, on_true, on_false));
+  return partition_impl<Pred, OnTrue, OnFalse>(pred, on_true, on_false);
 }
 
 } // namespace detail

@@ -76,20 +76,26 @@ struct advance_while_proxy
   };
 
   template <class Next>
-  out_iterator< impl<Next> > operator >>=(Next next) const
+  struct next_iter_info
   {
-    return make_out_iterator(impl<Next>(pred, next));
+    typedef impl<Next> type;
+  };
+
+  template <class Next>
+  typename next_iter_info<Next>::type next_iter(Next next) const
+  {
+    return impl<Next>(pred, next);
   }
 };
 
 template <class Pred>
-advance_while_proxy<Pred, take_while_policy> take_while(Pred pred)
+proxy_base< advance_while_proxy<Pred, take_while_policy> > take_while(Pred pred)
 {
   return advance_while_proxy<Pred, take_while_policy>(pred);
 }
 
 template <class Pred>
-advance_while_proxy<Pred, drop_while_policy> drop_while(Pred pred)
+proxy_base< advance_while_proxy<Pred, drop_while_policy> > drop_while(Pred pred)
 {
   return advance_while_proxy<Pred, drop_while_policy>(pred);
 }

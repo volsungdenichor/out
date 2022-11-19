@@ -40,14 +40,20 @@ struct tap_proxy
   };
 
   template <class Next>
-  out_iterator< impl<Next> > operator >>=(Next next) const
+  struct next_iter_info
   {
-    return make_out_iterator(impl<Next>(func, next));
+    typedef impl<Next> type;
+  };
+
+  template <class Next>
+  typename next_iter_info<Next>::type next_iter(Next next) const
+  {
+    return impl<Next>(func, next);
   }
 };
 
 template <class Func>
-tap_proxy<Func> tap(Func func)
+proxy_base< tap_proxy<Func> > tap(Func func)
 {
   return tap_proxy<Func>(func);
 }

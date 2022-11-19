@@ -128,7 +128,6 @@ int main()
   std::vector<std::string> dest;
 
   out::make_range(std::make_pair(persons.begin(), persons.end()))
-    >>= out::output()
     >>= out::transform_maybe(out::identity())
     >>= out::transform(out::mem_fn(&Person::first_name))
     >>= out::tee(out::insert(dest))

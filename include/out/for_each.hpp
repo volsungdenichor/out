@@ -27,7 +27,7 @@ struct for_each_impl
 template <class Func>
 out_iterator< for_each_impl<Func> > for_each(Func func)
 {
-  return make_out_iterator(for_each_impl<Func>(func));
+  return for_each_impl<Func>(func);
 }
 
 } // namespace detail

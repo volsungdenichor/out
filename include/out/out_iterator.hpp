@@ -46,6 +46,26 @@ void yield_range(It& it, const R& r)
   std::for_each(begin(r), end(r), yield(it));
 }
 
+template <class First, class Second>
+struct chain
+{
+  First first;
+  Second second;
+
+  chain(const First& first, const Second& second)
+    : first(first)
+    , second(second)
+  {
+  }
+
+  template <class T>
+  void operator()(const T& item) const
+  {
+    first(item);
+    second(item);
+  }
+};
+
 template <class Impl>
 struct out_iterator
 {
@@ -98,28 +118,29 @@ struct out_iterator
 };
 
 template <class Impl>
-out_iterator<Impl> make_out_iterator(Impl impl)
+struct proxy_base
 {
-  return out_iterator<Impl>(impl);
-}
+  Impl impl;
 
-struct output_proxy
-{
-  template <class Next>
-  Next operator >>=(Next next) const
+  proxy_base(const Impl& impl)
+    : impl(impl)
   {
-    return next;
+  }
+
+  template <class Next>
+  proxy_base< chain<Impl, Next> > operator >>=(const proxy_base<Next>& next) const
+  {
+    return proxy_base< chain<Impl, Next> >(chain<Impl, Next>(impl, next.impl));
+  }
+
+  template <class Iter>
+  out_iterator< typename Impl::template next_iter_info<Iter>::type > operator >>=(Iter iter) const
+  {
+    return impl.next_iter(iter);
   }
 };
 
-inline output_proxy output()
-{
-  return output_proxy();
-}
-
 } // namespace detail
-
-using detail::output;
 
 } // namespace out
 

@@ -75,13 +75,19 @@ struct enumerate_proxy
   };
 
   template <class Next>
-  out_iterator< impl<Next> > operator >>=(Next next) const
+  struct next_iter_info
   {
-    return make_out_iterator(impl<Next>(start, next));
+    typedef impl<Next> type;
+  };
+
+  template <class Next>
+  typename next_iter_info<Next>::type next_iter(Next next) const
+  {
+    return impl<Next>(start, next);
   }
 };
 
-inline enumerate_proxy enumerate(int start = 0)
+inline proxy_base< enumerate_proxy > enumerate(int start = 0)
 {
   return enumerate_proxy(start);
 }

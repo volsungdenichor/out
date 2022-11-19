@@ -42,14 +42,20 @@ struct filter_proxy
   };
 
   template <class Next>
-  out_iterator< impl<Next> > operator >>=(Next next) const
+  struct next_iter_info
   {
-    return make_out_iterator(impl<Next>(pred, next));
+    typedef impl<Next> type;
+  };
+
+  template <class Next>
+  typename next_iter_info<Next>::type next_iter(Next next) const
+  {
+    return impl<Next>(pred, next);
   }
 };
 
 template <class Pred>
-filter_proxy<Pred> filter(Pred pred)
+proxy_base< filter_proxy<Pred> > filter(Pred pred)
 {
   return filter_proxy<Pred>(pred);
 }

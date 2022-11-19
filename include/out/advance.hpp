@@ -83,23 +83,29 @@ struct advance_proxy
   };
 
   template <class Next>
-  out_iterator< impl<Next> > operator >>=(Next next) const
+  struct next_iter_info
   {
-    return make_out_iterator(impl<Next>(count, next));
+    typedef impl<Next> type;
+  };
+
+  template <class Next>
+  typename next_iter_info<Next>::type next_iter(Next next) const
+  {
+    return impl<Next>(count, next);
   }
 };
 
-inline advance_proxy<drop_policy> drop(int count)
+inline proxy_base< advance_proxy<drop_policy> > drop(int count)
 {
   return advance_proxy<drop_policy>(count);
 }
 
-inline advance_proxy<take_policy> take(int count)
+inline proxy_base< advance_proxy<take_policy> > take(int count)
 {
   return advance_proxy<take_policy>(count);
 }
 
-inline advance_proxy<stride_policy> stride(int count)
+inline proxy_base< advance_proxy<stride_policy> > stride(int count)
 {
   return advance_proxy<stride_policy>(count);
 }
