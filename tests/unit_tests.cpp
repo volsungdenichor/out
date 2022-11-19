@@ -66,6 +66,19 @@ struct TransformMaybeFunctor
   }
 };
 
+struct repeat_value
+{
+  int n;
+
+  repeat_value(int n) : n(n) { }
+
+  template <class T>
+  std::vector<T> operator()(T value) const
+  {
+    return std::vector<T>(n, value);
+  }
+};
+
 template <class T>
 std::vector<T> concat(std::vector<T> lhs, const std::vector<T>& rhs)
 {
@@ -157,28 +170,42 @@ std::vector<T> iota(T lo, T up)
   return result;
 }
 
+template <class Res, class In, class Pipe>
+Res run(const In& in, Pipe pipe)
+{
+  Res res;
+  out::make_range(in) >>= pipe >>= out::push_back(res);
+  return res;
+}
+
+template <class T, class In, class Pipe>
+std::vector<T> run_to_vec(const In& in, Pipe pipe)
+{
+  return run< std::vector<T> >(in, pipe);
+}
+
 TEST_CASE("transform", "")
 {
-  const std::vector<int> in = iota(0, 5);
-  std::vector<std::string> res;
-
-  out::make_range(in) >>= out::transform(to_string()) >>= out::push_back(res);
+  const std::vector<std::string> res = run_to_vec<std::string>(
+    iota(0, 5),
+    out::transform(to_string()));
   REQUIRE(res == vec(s("0"), s("1"), s("2"), s("3"), s("4")));
 }
 
 TEST_CASE("transform_join", "")
 {
-  const std::vector<int> in = iota(100, 105);
-  std::string res;
-  out::make_range(in) >>= out::transform_join(to_string()) >>= out::push_back(res);
+  const std::string res = run<std::string>(
+    iota(100, 105), 
+   out::transform_join(to_string()));
   REQUIRE(res == "100101102103104");
 }
 
 TEST_CASE("transform_maybe", "")
 {
-  const std::vector<std::string> in = vec(s("Mercury"), s("Venus"), s("Earth"), s("Mars"), s("Jupiter"), s("Saturn"), s("Uranus"), s("Neptune"));
-  std::vector<std::string> res;
-  out::make_range(in) >>= out::transform_maybe(TransformMaybeFunctor()) >>= out::push_back(res);
+  const std::vector<std::string> res = run_to_vec<std::string>(
+    vec(s("Mercury"), s("Venus"), s("Earth"), s("Mars"), s("Jupiter"), s("Saturn"), s("Uranus"), s("Neptune")),
+    out::transform_maybe(TransformMaybeFunctor()));
+
   REQUIRE(res == vec(s("Venus"), s("Earth"), s("Mars")));
 }
 
@@ -192,68 +219,65 @@ TEST_CASE("enumerate", "")
 
 TEST_CASE("filter", "")
 {
-  const std::vector<int> in = iota(0, 10);
-  std::vector<int> res;
-
-  out::make_range(in) >>= out::filter(&is_prime) >>= out::push_back(res);
+  const std::vector<int> res = run_to_vec<int>(
+    iota(0, 10), 
+    out::filter(&is_prime));
   REQUIRE(res == vec(2, 3, 5, 7));
 }
 
 TEST_CASE("filter, transform", "")
 {
-  const std::vector<int> in = iota(0, 10);
-  std::vector<std::string> res;
-
-  out::make_range(in) >>= out::filter(&is_prime) >>= out::transform(to_string()) >>= out::push_back(res);
+  const std::vector<std::string> res = run_to_vec<std::string>(
+    iota(0, 10), 
+    out::filter(&is_prime) >>= out::transform(to_string()));
   REQUIRE(res == vec(s("2"), s("3"), s("5"), s("7")));
 }
 
 TEST_CASE("transform, filter", "")
 {
-  const std::vector<int> in = iota(0, 5);
-  std::vector<int> res;
-
-  out::make_range(in) >>= out::transform(&cube) >>= out::filter(&is_even) >>= out::push_back(res);
+  const std::vector<int> res = run_to_vec<int>(
+    iota(0, 5), 
+    out::transform(&cube) >>= out::filter(&is_even));
   REQUIRE(res == vec(0, 8, 64));
 }
 
 TEST_CASE("take", "")
 {
-  const std::vector<int> in = iota(0, 10);
-  std::vector<int> res;
-  out::make_range(in) >>= out::take(4) >>= out::push_back(res);
+  const std::vector<int> res = run_to_vec<int>(
+    iota(0, 10), 
+    out::take(4));
   REQUIRE(res == vec(0, 1, 2, 3));
 }
 
 TEST_CASE("take_while", "")
 {
-  const std::vector<int> in = iota(0, 10);
-  std::vector<int> res;
-  out::make_range(in) >>= out::take_while(out::less(5)) >>= out::push_back(res);
+  const std::vector<int> res = run_to_vec<int>(
+    iota(0, 10), 
+    out::take_while(out::less(5))); 
   REQUIRE(res == vec(0, 1, 2, 3, 4));
 }
 
 TEST_CASE("drop", "")
 {
-  const std::vector<int> in = iota(0, 10);
-  std::vector<int> res;
-  out::make_range(in) >>= out::drop(4) >>= out::push_back(res);
+  const std::vector<int> res = run_to_vec<int>(
+    iota(0, 10),
+    out::drop(4));
   REQUIRE(res == vec(4, 5, 6, 7, 8, 9));
 }
 
 TEST_CASE("drop_while", "")
 {
-  const std::vector<int> in = iota(0, 10);
-  std::vector<int> res;
-  out::make_range(in) >>= out::drop_while(out::less(5)) >>= out::push_back(res);
+  const std::vector<int> res = run_to_vec<int>(
+    iota(0, 10), 
+    out::drop_while(out::less(5)));
   REQUIRE(res == vec(5, 6, 7, 8, 9));
 }
 
 TEST_CASE("stride", "")
 {
-  const std::vector<int> in = iota(0, 10);
-  std::vector<int> res;
-  out::make_range(in)>>= out::stride(4) >>= out::push_back(res);
+  const std::vector<int> res = run_to_vec<int>(
+    iota(0, 10), 
+    out::stride(4));
   REQUIRE(res == vec(0, 4, 8));
 }
 
@@ -280,33 +304,31 @@ TEST_CASE("fork", "")
 
 TEST_CASE("intersperse", "")
 {
-  const std::vector<int> in = iota(0, 5);
-  std::vector<int> res;
-  out::make_range(in) >>= out::intersperse(-1) >>= out::push_back(res);
+  const std::vector<int> res = run_to_vec<int>(
+    iota(0, 5), 
+    out::intersperse(-1));
   REQUIRE(res == vec(0, -1, 1, -1, 2, -1, 3, -1, 4));
 }
 
 TEST_CASE("intersperse empty", "")
 {
-  const std::vector<int> in;
-  std::vector<int> res;
-  out::make_range(in) >>= out::intersperse(-1) >>= out::push_back(res);
+  const std::vector<int> res = run_to_vec<int>(std::vector<int>(), out::intersperse(1));
   REQUIRE(res.empty());
 }
 
 TEST_CASE("join_with", "")
 {
-  const std::vector<std::string> in = vec(s("alpha"), s("beta"), s("gamma"));
-  std::string res;
-  out::make_range(in) >>= out::join_with(',') >>= out::push_back(res);
+  const std::string res = run<std::string>(
+    vec(s("alpha"), s("beta"), s("gamma")),
+    out::join_with(','));
   REQUIRE(res == "alpha,beta,gamma");
 }
 
 TEST_CASE("join", "")
 {
-  const std::vector< std::vector<int> > in = vec(vec(0, 1), vec(2, 3, 4), vec(5, 6, 7), vec(8, 9));
-  std::vector<int> res;
-  out::make_range(in) >>= out::join() >>= out::push_back(res);
+  const std::vector<int> res = run_to_vec<int>(
+    vec(vec(0, 1), vec(2, 3, 4), vec(5, 6, 7), vec(8, 9)),
+    out::join());
   REQUIRE(res == vec(0, 1, 2, 3, 4, 5, 6, 7, 8, 9));
 }
 
@@ -353,22 +375,36 @@ TEST_CASE("insert - default argument", "")
 
 TEST_CASE("tap", "")
 {
-  const std::vector<int> in = iota(0, 5);
-  std::vector<int> res;
   std::stringstream ss;
-  out::make_range(in) >>= out::tap(add_to_buffer(ss, ",")) >>= out::transform(&cube) >>= out::push_back(res);
+  const std::vector<int> res = run_to_vec<int>(
+    iota(0, 5), 
+    out::tap(add_to_buffer(ss, ",")) >>= out::transform(&cube));
   REQUIRE(res == vec(0, 1, 8, 27, 64));
   REQUIRE(ss.str() == "0,1,2,3,4,");
 }
 
 TEST_CASE("tee", "")
 {
-  const std::vector<int> in = iota(0, 5);
-  std::vector<int> res;
   std::stringstream ss;
-  out::make_range(in) >>= out::tee(out::ostream(ss, ",")) >>= out::transform(&cube) >>= out::push_back(res);
+  const std::vector<int> res = run_to_vec<int>(
+    iota(0, 5), 
+    out::tee(out::ostream(ss, ",")) >>= out::transform(&cube));
   REQUIRE(res == vec(0, 1, 8, 27, 64));
   REQUIRE(ss.str() == "0,1,2,3,4,");
 }
 
+TEST_CASE("complex", "")
+{
+  const std::string res = run<std::string>(
+    iota(0, 1000),
+    out::drop(10) 
+    >>= out::stride(3) 
+    >>= out::take(4) 
+    >>= out::transform_join(repeat_value(2)) 
+    >>= out::transform(to_string()) 
+    >>= out::intersperse(s(", ")) 
+    >>= out::join());
+
+  REQUIRE(res == "10, 10, 13, 13, 16, 16, 19, 19");
+}
 

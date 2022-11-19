@@ -46,26 +46,6 @@ void yield_range(It& it, const R& r)
   std::for_each(begin(r), end(r), yield(it));
 }
 
-template <class First, class Second>
-struct chain
-{
-  First first;
-  Second second;
-
-  chain(const First& first, const Second& second)
-    : first(first)
-    , second(second)
-  {
-  }
-
-  template <class T>
-  void operator()(const T& item) const
-  {
-    first(item);
-    second(item);
-  }
-};
-
 template <class Impl>
 struct out_iterator
 {
@@ -117,6 +97,43 @@ struct out_iterator
   Impl impl;
 };
 
+template <class First, class Second>
+struct chain_proxy
+{
+  First first;
+  Second second;
+
+  chain_proxy(const First& first, const Second& second)
+    : first(first)
+    , second(second)
+  {
+  }
+
+  template <class T>
+  void operator()(const T& item) const
+  {
+    first(item);
+    second(item);
+  }
+  
+  template <class Next>
+  struct next_iter_info
+  {
+    typedef typename First::template next_iter_info<
+      out_iterator<
+        typename Second::template next_iter_info<Next>::type
+      > 
+    >::type type;
+  };
+
+  template <class Next>
+  typename next_iter_info<Next>::type next_iter(Next next) const
+  {
+    typedef typename Second::template next_iter_info<Next>::type S;
+    return first.next_iter(out_iterator<S>(second.next_iter(next)));
+  }
+};
+
 template <class Impl>
 struct proxy_base
 {
@@ -128,9 +145,9 @@ struct proxy_base
   }
 
   template <class Next>
-  proxy_base< chain<Impl, Next> > operator >>=(const proxy_base<Next>& next) const
+  proxy_base< chain_proxy<Impl, Next> > operator >>=(const proxy_base<Next>& next) const
   {
-    return proxy_base< chain<Impl, Next> >(chain<Impl, Next>(impl, next.impl));
+    return chain_proxy<Impl, Next>(impl, next.impl);
   }
 
   template <class Iter>
