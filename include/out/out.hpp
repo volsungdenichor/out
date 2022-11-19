@@ -19,7 +19,7 @@
 
 #include "out/ostream.hpp"
 #include "out/dev_null.hpp"
-#include "out/push_back.hpp"
+#include "out/insert.hpp"
 #include "out/for_each.hpp"
 
 #endif // OUT_OUT_HPP

@@ -1,5 +1,5 @@
-#ifndef OUT_PUSH_BACK_HPP
-#define OUT_PUSH_BACK_HPP
+#ifndef OUT_INSERT_HPP
+#define OUT_INSERT_HPP
 
 #include <out/in_iterator.hpp>
 
@@ -34,4 +34,4 @@ using detail::insert;
 
 } // namespace out
 
-#endif // OUT_PUSH_BACK_HPP
+#endif // OUT_INSERT_HPP
