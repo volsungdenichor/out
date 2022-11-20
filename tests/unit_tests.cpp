@@ -1,5 +1,6 @@
 #include "catch.hpp"
 #include <out/out.hpp>
+#include "test_utils.hpp"
 
 struct to_string
 {
@@ -79,96 +80,6 @@ struct repeat_value
   }
 };
 
-template <class T>
-std::vector<T> concat(std::vector<T> lhs, const std::vector<T>& rhs)
-{
-  lhs.insert(lhs.end(), rhs.begin(), rhs.end());
-  return lhs;
-}
-
-template <class T>
-std::vector<T> append(std::vector<T> v, const T& item)
-{
-  v.push_back(item);
-  return v;
-}
-
-template <class T>
-std::vector<T> vec(T v0)
-{
-  std::vector<T> res;
-  res.push_back(v0);
-  return res;
-}
-
-template <class T>
-std::vector<T> vec(T v0, T v1)
-{
-  return append(vec(v0), v1);
-}
-
-template <class T>
-std::vector<T> vec(T v0, T v1, T v2)
-{
-  return append(vec(v0, v1), v2);
-}
-
-template <class T>
-std::vector<T> vec(T v0, T v1, T v2, T v3)
-{
-  return append(vec(v0, v1, v2), v3);
-}
-
-template <class T>
-std::vector<T> vec(T v0, T v1, T v2, T v3, T v4)
-{
-  return append(vec(v0, v1, v2, v3), v4);
-}
-
-template <class T>
-std::vector<T> vec(T v0, T v1, T v2, T v3, T v4, T v5)
-{
-  return append(vec(v0, v1, v2, v3, v4), v5);
-}
-
-template <class T>
-std::vector<T> vec(T v0, T v1, T v2, T v3, T v4, T v5, T v6)
-{
-  return append(vec(v0, v1, v2, v3, v4, v5), v6);
-}
-
-template <class T>
-std::vector<T> vec(T v0, T v1, T v2, T v3, T v4, T v5, T v6, T v7)
-{
-  return append(vec(v0, v1, v2, v3, v4, v5, v6), v7);
-}
-
-template <class T>
-std::vector<T> vec(T v0, T v1, T v2, T v3, T v4, T v5, T v6, T v7, T v8)
-{
-  return append(vec(v0, v1, v2, v3, v4, v5, v6, v7), v8);
-}
-
-template <class T>
-std::vector<T> vec(T v0, T v1, T v2, T v3, T v4, T v5, T v6, T v7, T v8, T v9)
-{
-  return append(vec(v0, v1, v2, v3, v4, v5, v6, v7, v8), v9);
-}
-
-template <class Iter, class T>
-void iota(Iter b, Iter e, T init)
-{
-  for (; b != e; ++b, ++init)
-    *b = init;
-}
-
-template <class T>
-std::vector<T> iota(T lo, T up)
-{
-  std::vector<T> result(up - lo);
-  iota(result.begin(), result.end(), lo);
-  return result;
-}
 
 template <class Res, class In, class Pipe>
 Res run(const In& in, Pipe pipe)
@@ -196,7 +107,7 @@ TEST_CASE("transform_join", "")
 {
   const std::string res = run<std::string>(
     iota(100, 105), 
-   out::transform_join(to_string()));
+    out::transform_join(to_string()));
   REQUIRE(res == "100101102103104");
 }
 
@@ -249,20 +160,36 @@ TEST_CASE("take", "")
   REQUIRE(res == vec(0, 1, 2, 3));
 }
 
-TEST_CASE("take_while", "")
-{
-  const std::vector<int> res = run_to_vec<int>(
-    iota(0, 10), 
-    out::take_while(out::less(5))); 
-  REQUIRE(res == vec(0, 1, 2, 3, 4));
-}
-
 TEST_CASE("drop", "")
 {
   const std::vector<int> res = run_to_vec<int>(
     iota(0, 10),
     out::drop(4));
   REQUIRE(res == vec(4, 5, 6, 7, 8, 9));
+}
+
+TEST_CASE("slice", "")
+{
+  const std::vector<int> res = run_to_vec<int>(
+    iota(0, 20),
+    out::slice(5, 10));
+  REQUIRE(res == vec(5, 6, 7, 8, 9));
+}
+
+TEST_CASE("sub", "")
+{
+  const std::vector<int> res = run_to_vec<int>(
+    iota(0, 20),
+    out::sub(5, 2));
+  REQUIRE(res == vec(5, 6));
+}
+
+TEST_CASE("take_while", "")
+{
+  const std::vector<int> res = run_to_vec<int>(
+    iota(0, 10), 
+    out::take_while(out::less(5))); 
+  REQUIRE(res == vec(0, 1, 2, 3, 4));
 }
 
 TEST_CASE("drop_while", "")
@@ -403,8 +330,9 @@ TEST_CASE("complex", "")
     >>= out::transform_join(repeat_value(2)) 
     >>= out::transform(to_string()) 
     >>= out::intersperse(s(", ")) 
-    >>= out::join());
+    >>= out::join()
+    >>= out::take_while(out::not_equal_to('6')));
 
-  REQUIRE(res == "10, 10, 13, 13, 16, 16, 19, 19");
+  REQUIRE(res == "10, 10, 13, 13, 1");
 }
 

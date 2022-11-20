@@ -110,11 +110,23 @@ inline proxy_base< advance_proxy<stride_policy> > stride(int count)
   return advance_proxy<stride_policy>(count);
 }
 
+inline proxy_base< chain_proxy< advance_proxy<drop_policy>, advance_proxy<take_policy> > >  sub(int begin, int count)
+{
+  return drop(begin) >>= take(count);
+}
+
+inline proxy_base< chain_proxy< advance_proxy<drop_policy>, advance_proxy<take_policy> > >  slice(int begin, int end)
+{
+  return drop(begin) >>= take(std::max(0, end - begin));
+}
+
 } // namespace detail
 
 using detail::drop;
 using detail::take;
 using detail::stride;
+using detail::sub;
+using detail::slice;
 
 } // namespace out
 
