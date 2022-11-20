@@ -71,7 +71,8 @@ struct advance_while_proxy
     template <class T>
     void operator()(const T& item)
     {
-      Policy()(pred, done, next, item);
+      static const Policy policy = Policy(); 
+      policy(pred, done, next, item);
     }
   };
 

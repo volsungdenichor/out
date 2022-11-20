@@ -54,11 +54,12 @@ struct intersperse_proxy
     template <class T>
     void operator()(const T& item)
     {
+      static const Policy policy = Policy();
       if (init)
       {
         yield(next, separator);
       }
-      Policy()(next, item);
+      policy(next, item);
       init = true;
     }
   };

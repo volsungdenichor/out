@@ -70,7 +70,8 @@ struct transform_proxy
     template <class R>
     void handle(const R& result)
     {
-      Policy()(next, result);
+      static const Policy policy = Policy();
+      policy(next, result);
     }
   };
 

@@ -78,7 +78,8 @@ struct advance_proxy
     template <class T>
     void operator()(const T& item)
     {
-      Policy()(count, n, next, item);
+      static const Policy policy = Policy();
+      policy(count, n, next, item);
     }
   };
 
