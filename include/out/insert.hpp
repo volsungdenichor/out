@@ -10,12 +10,6 @@ namespace detail
 {
 
 template <class Container>
-std::back_insert_iterator<Container> push_back(Container& container)
-{
-  return std::back_inserter(container);
-}
-
-template <class Container>
 std::insert_iterator<Container> insert(Container& container, typename Container::iterator iter)
 {
   return std::inserter(container, iter);
@@ -27,9 +21,22 @@ std::insert_iterator<Container> insert(Container& container)
   return insert(container, end(container));
 }
 
+template <class Container>
+std::insert_iterator<Container> push_front(Container& container)
+{
+  return insert(container, begin(container));
+}
+
+template <class Container>
+std::back_insert_iterator<Container> push_back(Container& container)
+{
+  return std::back_inserter(container);
+}
+
 } // namespace detail
 
 using detail::push_back;
+using detail::push_front;
 using detail::insert;
 
 } // namespace out

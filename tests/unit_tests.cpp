@@ -284,6 +284,13 @@ TEST_CASE("push_back", "")
   REQUIRE(res == vec(50, 51, 52, 53, 54));
 }
 
+TEST_CASE("push_front", "")
+{
+  const std::vector<int> in = iota(50, 55);
+  std::vector<int> res = vec(100, 101, 102);
+  out::make_range(in) >>= out::push_front(res);
+  REQUIRE(res == vec(50, 51, 52, 53, 54, 100, 101, 102));
+}
 TEST_CASE("insert", "")
 {
   const std::vector<int> in = iota(0, 6);
