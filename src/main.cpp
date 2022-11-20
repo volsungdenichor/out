@@ -9,31 +9,6 @@
 #include "out/in_iterator.hpp"
 #include <boost/optional.hpp>
 
-template <class Iter, class T>
-void iota(Iter b, Iter e, T init)
-{
-  for (; b != e; ++b, ++init)
-  {
-    *b = init;
-  }
-}
-
-struct sqr
-{
-  int operator()(int v) const
-  {
-    return v * v;
-  }
-};
-
-struct is_even
-{
-  bool operator()(int v) const
-  {
-    return v % 2 == 0;
-  }
-};
-
 struct is_vowel
 {
   bool operator()(char ch) const
@@ -98,14 +73,6 @@ struct get_prefix
         return text.substr(0, std::min(text.size(), static_cast<std::size_t>(n)));
     }
 };
-
-template <class T>
-std::vector<T> create_vector(T lo, T up)
-{
-  std::vector<T> res(up - lo);
-  iota(res.begin(), res.end(), lo);
-  return res;
-}
 
 int main()
 {

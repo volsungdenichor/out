@@ -138,6 +138,14 @@ not_fn_t<Pred> not_fn(Pred pred)
   return not_fn_t<Pred>(pred);
 }
 
+struct do_nothing
+{
+  template <class T>
+  void operator()(const T&) const
+  {
+  }
+};
+
 } // namespace out
 
 #endif // OUT_FUNCTIONS_HPP

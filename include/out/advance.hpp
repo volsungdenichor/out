@@ -123,10 +123,10 @@ inline proxy_base< chain_proxy< advance_proxy<drop_policy>, advance_proxy<take_p
 } // namespace detail
 
 using detail::drop;
-using detail::take;
+using detail::slice;
 using detail::stride;
 using detail::sub;
-using detail::slice;
+using detail::take;
 
 } // namespace out
 
