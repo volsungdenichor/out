@@ -291,6 +291,16 @@ TEST_CASE("push_front", "")
   out::make_range(in) >>= out::push_front(res);
   REQUIRE(res == vec(50, 51, 52, 53, 54, 100, 101, 102));
 }
+
+
+TEST_CASE("overwrite", "")
+{
+  const std::vector<int> in = iota(50, 55);
+  std::vector<int> res(3);
+  out::make_range(in) >>= out::overwrite(res);
+  REQUIRE(res == vec(50, 51, 52));
+}
+
 TEST_CASE("insert", "")
 {
   const std::vector<int> in = iota(0, 6);

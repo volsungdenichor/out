@@ -9,6 +9,28 @@ namespace out
 namespace detail
 {
 
+template <class Iter>
+struct overwrite_impl
+{
+  mutable Iter b;
+  Iter e;
+
+  overwrite_impl(Iter b, Iter e)
+    : b(b)
+    , e(e)
+  {
+  }
+
+  template <class T>
+  void operator()(const T& item) const
+  {
+    if (b != e)
+    {
+      yield(b, item);
+    }
+  }
+};
+
 template <class Container>
 std::insert_iterator<Container> insert(Container& container, typename Container::iterator iter)
 {
@@ -33,11 +55,18 @@ std::back_insert_iterator<Container> push_back(Container& container)
   return std::back_inserter(container);
 }
 
+template <class Container>
+out_iterator< overwrite_impl<typename Container::iterator> > overwrite(Container& container)
+{
+  return overwrite_impl<typename Container::iterator>(begin(container), end(container));
+}
+
 } // namespace detail
 
 using detail::push_back;
 using detail::push_front;
 using detail::insert;
+using detail::overwrite;
 
 } // namespace out
 
