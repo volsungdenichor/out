@@ -12,8 +12,7 @@ namespace detail
 template <class Iter>
 struct overwrite_impl
 {
-  mutable Iter b;
-  Iter e;
+  Iter b, e;
 
   overwrite_impl(Iter b, Iter e)
     : b(b)
@@ -22,7 +21,7 @@ struct overwrite_impl
   }
 
   template <class T>
-  void operator()(const T& item) const
+  void operator()(const T& item)
   {
     if (b != e)
     {
